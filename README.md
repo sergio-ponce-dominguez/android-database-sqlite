@@ -1,6 +1,6 @@
 # android-database-sqlite
 
-Simple wraper around android.database.sqlite
+Simple wrapper around android.database.sqlite
 
 ## Install
 

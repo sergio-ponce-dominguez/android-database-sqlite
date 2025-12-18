@@ -1,7 +1,7 @@
 {
   "name": "android-database-sqlite",
   "version": "0.0.1",
-  "description": "Simple wraper around android.database.sqlite",
+  "description": "Simple wrapper around android.database.sqlite",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",

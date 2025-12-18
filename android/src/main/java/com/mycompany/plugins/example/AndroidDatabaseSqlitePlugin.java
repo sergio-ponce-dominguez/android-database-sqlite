@@ -1,4 +1,4 @@
-package com.mycompany.plugins.example;
+package com.sepodo.software.plugins.android.database.sqlite;
 
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
