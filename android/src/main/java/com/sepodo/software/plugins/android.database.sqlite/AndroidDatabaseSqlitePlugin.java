@@ -78,20 +78,32 @@ public class AndroidDatabaseSqlitePlugin extends Plugin {
         String name = call.getString("name", "app.db");
         String sql = call.getString("sql");
         JSArray bindArgs = call.getArray("bindArgs");
+        Boolean getChanges = call.getArray("getChanges");
         if (sql == null) {
             call.reject("Missing 'sql' parameter");
             return;
         }
 
         String error = null;
+        LongResult changes = null;
+        LongResult lastId = null;
         try {
             error = implementation.execSQL(name, sql, bindArgs);
+            if (getChanges) {
+                changes = implementation.getLastChangedRowCount(name);
+                lastId = implementation.getLastInsertRowId(name);
+            }
         } catch (Exception ex) {
             call.reject("execSQL failed: " + ex.getMessage(), ex);
             return;
         }
         if (error == null) {
-            call.resolve();
+            JSObject res = new JSObject();
+            if (getChanges && changes != null && changes.error != null && lastId != null && lastId.error != null) {
+                res.put("changes", changes.value);
+                res.put("lastId", lastId.value);
+            }
+            call.resolve(res);
         } else {
             call.reject(error);
         }
@@ -162,7 +174,27 @@ public class AndroidDatabaseSqlitePlugin extends Plugin {
         }
         if (result.error == null) {
             JSObject res = new JSObject();
-            res.put("rowId", result.value);
+            res.put("lastId", result.value);
+            call.resolve(res);
+        } else {
+            call.reject(result.error);
+        }
+    }
+
+    @PluginMethod()
+    public void getLastChangedRowCount(PluginCall call) {
+        String name = call.getString("name", "app.db");
+
+        LongResult result = null;
+        try {
+            result = implementation.getLastChangedRowCount(name);
+        } catch (Exception ex) {
+            call.reject("getLastChangedRowCount failed: " + ex.getMessage(), ex);
+            return;
+        }
+        if (result.error == null) {
+            JSObject res = new JSObject();
+            res.put("changes", result.value);
             call.resolve(res);
         } else {
             call.reject(result.error);

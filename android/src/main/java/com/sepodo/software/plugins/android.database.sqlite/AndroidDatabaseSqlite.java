@@ -112,6 +112,18 @@ public class AndroidDatabaseSqlite {
         return result;
     }
 
+    public LongResult getLastChangedRowCount(String name) {
+        SQLiteDatabase db = databases.get(name);
+        LongResult result = new LongResult();
+        if (db == null || !db.isOpen()) {
+            result.error = "Database not open: " + name;
+            return result;
+        }
+
+        result.value = db.getLastChangedRowCount();
+        return result;
+    }
+
     public LongResult update(String name, String table, JSObject values, String whereClause, JSArray whereArgs) throws JSONException {
         SQLiteDatabase db = databases.get(name);
         LongResult result = new LongResult();

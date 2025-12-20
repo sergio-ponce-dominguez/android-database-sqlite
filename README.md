@@ -21,6 +21,7 @@ npx cap sync
 * [`rawQuery(...)`](#rawquery)
 * [`insert(...)`](#insert)
 * [`getLastInsertRowId(...)`](#getlastinsertrowid)
+* [`getLastChangedRowCount(...)`](#getlastchangedrowcount)
 * [`update(...)`](#update)
 * [`delete(...)`](#delete)
 * [`beginTransaction(...)`](#begintransaction)
@@ -108,15 +109,15 @@ be used until reopened.
 ### execSQL(...)
 
 ```typescript
-execSQL(options: { name?: string; sql: string; bindArgs?: any[]; }) => any
+execSQL(options: { name?: string; sql: string; bindArgs?: any[]; getChanges?: boolean; }) => any
 ```
 
 Execute a single SQL statement that does not return results (for example
 DDL or INSERT/UPDATE/DELETE without returning rows).
 
-| Param         | Type                                                        |
-| ------------- | ----------------------------------------------------------- |
-| **`options`** | <code>{ name?: string; sql: string; bindArgs?: {}; }</code> |
+| Param         | Type                                                                              |
+| ------------- | --------------------------------------------------------------------------------- |
+| **`options`** | <code>{ name?: string; sql: string; bindArgs?: {}; getChanges?: boolean; }</code> |
 
 **Returns:** <code>any</code>
 
@@ -171,6 +172,25 @@ getLastInsertRowId(options: { name?: string; }) => any
 Return the "rowId" of the last row to be inserted on the current connection.
 
 Mirrors SQLiteDatabase.getLastInsertRowId.
+
+| Param         | Type                            |
+| ------------- | ------------------------------- |
+| **`options`** | <code>{ name?: string; }</code> |
+
+**Returns:** <code>any</code>
+
+--------------------
+
+
+### getLastChangedRowCount(...)
+
+```typescript
+getLastChangedRowCount(options: { name?: string; }) => any
+```
+
+Return the number of database rows that were inserted, updated, or deleted by the most recent SQL statement within the current transaction.
+
+Mirrors SQLiteDatabase.getLastChangedRowCount.
 
 | Param         | Type                            |
 | ------------- | ------------------------------- |

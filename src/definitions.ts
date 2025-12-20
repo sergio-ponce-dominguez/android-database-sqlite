@@ -40,8 +40,15 @@ export interface AndroidDatabaseSqlitePlugin {
    * @param options.name optional database name
    * @param options.sql the SQL statement to execute
    * @param options.bindArgs optional array of bind parameters for the statement
+   * @param options.getChanges if true, return value { changes, lastId } is filled
+   * @returns { changes, lastId } The number of rows changed by the most recent sql statement and The ROWID of the last row to be inserted under this connection.
    */
-  execSQL(options: { name?: string; sql: string; bindArgs?: any[] }): Promise<void>;
+  execSQL(options: {
+    name?: string;
+    sql: string;
+    bindArgs?: any[];
+    getChanges?: boolean;
+  }): Promise<{ changes?: number; lastId?: number }>;
 
   /**
    * Run a SELECT query and return the resulting rows.
@@ -74,9 +81,19 @@ export interface AndroidDatabaseSqlitePlugin {
    * Mirrors SQLiteDatabase.getLastInsertRowId.
    *
    * @param options.name optional database name
-   * @returns { rowId } the row ID of the newly inserted row, or -1 on failure
+   * @returns { lastId } The ROWID of the last row to be inserted under this connection.
    */
-  getLastInsertRowId(options: { name?: string }): Promise<{ rowId: number }>;
+  getLastInsertRowId(options: { name?: string }): Promise<{ lastId: number }>;
+
+  /**
+   * Return the number of database rows that were inserted, updated, or deleted by the most recent SQL statement within the current transaction.
+   *
+   * Mirrors SQLiteDatabase.getLastChangedRowCount.
+   *
+   * @param options.name optional database name
+   * @returns { changes } The number of rows changed by the most recent sql statement
+   */
+  getLastChangedRowCount(options: { name?: string }): Promise<{ changes: number }>;
 
   /**
    * Update rows in a table.
