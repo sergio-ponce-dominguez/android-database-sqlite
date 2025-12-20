@@ -10,12 +10,7 @@ import android.util.Base64;
 import com.getcapacitor.Logger;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
-import com.getcapacitor.Plugin;
-import com.getcapacitor.PluginCall;
-import com.getcapacitor.PluginMethod;
-import com.getcapacitor.annotation.CapacitorPlugin;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,8 +20,12 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class AndroidDatabaseSqlite {
-   
+    private final Context context;
     private final Map<String, SQLiteDatabase> databases = Collections.synchronizedMap(new HashMap<>());
+
+    public AndroidDatabaseSqlite(Context context) {
+        this.context = context;
+    }
 
     public String echo(String value) {
         Logger.info("Echo", value);
@@ -34,62 +33,49 @@ public class AndroidDatabaseSqlite {
     }
 
     public void openOrCreateDatabase(String name) {
-        SQLiteDatabase db = databases.get(name);
-        if (db == null) {
-            Context ctx = getContext();
-            db = ctx.openOrCreateDatabase(name, Context.MODE_PRIVATE, null);
-            databases.put(name, db);
-        } else if (!db.isOpen()) {
-            db.open();
-        }        
+        SQLiteDatabase db = context.openOrCreateDatabase(name, Context.MODE_PRIVATE, null);
+        databases.put(name, db);
     }
 
     public Boolean isOpen(String name) {
         SQLiteDatabase db = databases.get(name);
-        return db == null || db.isOpen();
+        return db != null && db.isOpen();
     }
 
     public String close(String name) {
-        SQLiteDatabase db = databases.get(name);
-        if (db == null) {
+        SQLiteDatabase db = databases.remove(name);
+        if (db == null || !db.isOpen()) {
             return "Database not open: " + name;
-        } else if (!db.isOpen()) {
-            return "Database already closed: " + name;
         }
         db.close();
         return null;
     }
 
-    public String execSQL(String name, String sql, JSArray args) {
+    public String execSQL(String name, String sql, JSArray bindArgs) throws JSONException {
         SQLiteDatabase db = databases.get(name);
-        if (db == null) {
+        if (db == null || !db.isOpen()) {
             return "Database not open: " + name;
-        } else if (!db.isOpen()) {
-            return "Database already closed: " + name;
         }
-        if (args != null && args.length() > 0) {
-            Object[] bindArgs = jsArrayToObjectArray(args);
-            db.execSQL(sql, bindArgs);
+        if (bindArgs != null && bindArgs.length() > 0) {
+            Object[] _bindArgs = jsArrayToObjectArray(bindArgs);
+            db.execSQL(sql, _bindArgs);
         } else {
             db.execSQL(sql);
         }
         return null;
     }
 
-    public ArrayResult rawQuery(String name, String sql, JSArray args) throws Exception {
+    public ArrayResult rawQuery(String name, String sql, JSArray selectionArgs) throws Exception {
         SQLiteDatabase db = databases.get(name);
         ArrayResult result = new ArrayResult();
-        if (db == null) {
+        if (db == null || !db.isOpen()) {
             result.error = "Database not open: " + name;
-            return result;
-        } else if (!db.isOpen()) {
-            result.error = "Database already closed: " + name;
             return result;
         }
         Cursor cursor = null;
         try {
-            String[] selectionArgs = jsArrayToStringArray(args);
-            cursor = db.rawQuery(sql, selectionArgs);
+            String[] _selectionArgs = jsArrayToStringArray(selectionArgs);
+            cursor = db.rawQuery(sql, _selectionArgs);
             result.value = cursorToJsArray(cursor);
             cursor.close();
             return result;
@@ -101,170 +87,96 @@ public class AndroidDatabaseSqlite {
         }
     }
 
-    @PluginMethod()
-    public void insert(PluginCall call) {
-        String name = call.getString("name", "app.db");
-        String table = call.getString("table");
-        JSObject values = call.getObject("values");
-        if (table == null || values == null) {
-            call.reject("Missing 'table' or 'values' parameter");
-            return;
-        }
+    public LongResult insert(String name, String table, JSObject values) {
         SQLiteDatabase db = databases.get(name);
+        LongResult result = new LongResult();
         if (db == null || !db.isOpen()) {
-            call.reject("Database not open: " + name);
-            return;
+            result.error = "Database not open: " + name;
+            return result;
         }
-        try {
-            ContentValues cv = jsObjectToContentValues(values);
-            long id = db.insertOrThrow(table, null, cv);
-            JSObject res = new JSObject();
-            res.put("id", id);
-            call.resolve(res);
-        } catch (Exception ex) {
-            call.reject("insert failed: " + ex.getMessage(), ex);
-        }
+        
+        ContentValues _values = jsObjectToContentValues(values);
+        result.value = db.insertOrThrow(table, null, _values);
+        return result;
     }
 
-    @PluginMethod()
-    public void update(PluginCall call) {
-        String name = call.getString("name", "app.db");
-        String table = call.getString("table");
-        JSObject values = call.getObject("values");
-        String where = call.getString("where");
-        JSArray whereArgs = call.getArray("whereArgs");
-        if (table == null || values == null) {
-            call.reject("Missing 'table' or 'values' parameter");
-            return;
-        }
+    public LongResult update(String name, String table, JSObject values, String whereClause, JSArray whereArgs) throws JSONException {
         SQLiteDatabase db = databases.get(name);
+        LongResult result = new LongResult();
         if (db == null || !db.isOpen()) {
-            call.reject("Database not open: " + name);
-            return;
+            result.error = "Database not open: " + name;
+            return result;
         }
-        try {
-            ContentValues cv = jsObjectToContentValues(values);
-            String[] whereArgsArr = jsArrayToStringArray(whereArgs);
-            int count = db.update(table, cv, where, whereArgsArr);
-            JSObject res = new JSObject();
-            res.put("rowsAffected", count);
-            call.resolve(res);
-        } catch (Exception ex) {
-            call.reject("update failed: " + ex.getMessage(), ex);
-        }
+
+        ContentValues _values = jsObjectToContentValues(values);
+        String[] _whereArgs = jsArrayToStringArray(whereArgs);
+        result.value = db.update(table, _values, whereClause, _whereArgs);
+        return result;
     }
 
-    @PluginMethod()
-    public void delete(PluginCall call) {
-        String name = call.getString("name", "app.db");
-        String table = call.getString("table");
-        String where = call.getString("where");
-        JSArray whereArgs = call.getArray("whereArgs");
-        if (table == null) {
-            call.reject("Missing 'table' parameter");
-            return;
-        }
+    public LongResult delete(String name, String table, String whereClause, JSArray whereArgs) throws JSONException {
         SQLiteDatabase db = databases.get(name);
+        LongResult result = new LongResult();
         if (db == null || !db.isOpen()) {
-            call.reject("Database not open: " + name);
-            return;
+            result.error = "Database not open: " + name;
+            return result;
         }
-        try {
-            String[] whereArgsArr = jsArrayToStringArray(whereArgs);
-            int count = db.delete(table, where, whereArgsArr);
-            JSObject res = new JSObject();
-            res.put("rowsAffected", count);
-            call.resolve(res);
-        } catch (Exception ex) {
-            call.reject("delete failed: " + ex.getMessage(), ex);
-        }
+
+        String[] _whereArgs = jsArrayToStringArray(whereArgs);
+        result.value = db.delete(table, whereClause, _whereArgs);
+        return result;
     }
 
-    @PluginMethod()
-    public void beginTransaction(PluginCall call) {
-        String name = call.getString("name", "app.db");
+    public String beginTransaction(String name) {
         SQLiteDatabase db = databases.get(name);
         if (db == null || !db.isOpen()) {
-            call.reject("Database not open: " + name);
-            return;
+            return "Database not open: " + name;
         }
-        try {
-            db.beginTransaction();
-            call.resolve();
-        } catch (Exception ex) {
-            call.reject("beginTransaction failed: " + ex.getMessage(), ex);
-        }
+        
+        db.beginTransaction();
+        return null;
     }
 
-    @PluginMethod()
-    public void setTransactionSuccessful(PluginCall call) {
-        String name = call.getString("name", "app.db");
+    public String setTransactionSuccessful(String name) {
         SQLiteDatabase db = databases.get(name);
         if (db == null || !db.isOpen()) {
-            call.reject("Database not open: " + name);
-            return;
+            return "Database not open: " + name;
         }
-        try {
-            db.setTransactionSuccessful();
-            call.resolve();
-        } catch (Exception ex) {
-            call.reject("setTransactionSuccessful failed: " + ex.getMessage(), ex);
-        }
+        
+        db.setTransactionSuccessful();
+        return null;
     }
 
-    @PluginMethod()
-    public void endTransaction(PluginCall call) {
-        String name = call.getString("name", "app.db");
+    public String endTransaction(String name) {
         SQLiteDatabase db = databases.get(name);
         if (db == null || !db.isOpen()) {
-            call.reject("Database not open: " + name);
-            return;
+            return "Database not open: " + name;
         }
-        try {
-            db.endTransaction();
-            call.resolve();
-        } catch (Exception ex) {
-            call.reject("endTransaction failed: " + ex.getMessage(), ex);
-        }
+        
+        db.endTransaction();
+        return null;
     }
 
-    @PluginMethod()
-    public void getVersion(PluginCall call) {
-        String name = call.getString("name", "app.db");
+    public LongResult getVersion(String name) {
         SQLiteDatabase db = databases.get(name);
+        LongResult result = new LongResult();
         if (db == null || !db.isOpen()) {
-            call.reject("Database not open: " + name);
-            return;
+            result.error = "Database not open: " + name;
+            return result;
         }
-        try {
-            int v = db.getVersion();
-            JSObject res = new JSObject();
-            res.put("version", v);
-            call.resolve(res);
-        } catch (Exception ex) {
-            call.reject("getVersion failed: " + ex.getMessage(), ex);
-        }
+
+        result.value = db.getVersion();
+        return result;
     }
 
-    @PluginMethod()
-    public void setVersion(PluginCall call) {
-        String name = call.getString("name", "app.db");
-        Integer version = call.getInt("version");
-        if (version == null) {
-            call.reject("Missing 'version' parameter");
-            return;
-        }
+    public String setVersion(String name, Integer version) {
         SQLiteDatabase db = databases.get(name);
         if (db == null || !db.isOpen()) {
-            call.reject("Database not open: " + name);
-            return;
+            return "Database not open: " + name;
         }
-        try {
-            db.setVersion(version);
-            call.resolve();
-        } catch (Exception ex) {
-            call.reject("setVersion failed: " + ex.getMessage(), ex);
-        }
+        
+        db.setVersion(version);
+        return null;
     }
 
     // Helpers
