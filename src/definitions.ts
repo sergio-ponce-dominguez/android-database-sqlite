@@ -69,6 +69,16 @@ export interface AndroidDatabaseSqlitePlugin {
   insert(options: { name?: string; table: string; values: Record<string, any> }): Promise<{ id: number }>;
 
   /**
+   * Return the "rowId" of the last row to be inserted on the current connection.
+   *
+   * Mirrors SQLiteDatabase.getLastInsertRowId.
+   *
+   * @param options.name optional database name
+   * @returns { rowId } the row ID of the newly inserted row, or -1 on failure
+   */
+  getLastInsertRowId(options: { name?: string }): Promise<{ rowId: number }>;
+
+  /**
    * Update rows in a table.
    *
    * Mirrors SQLiteDatabase.update: updates rows that match the whereClause

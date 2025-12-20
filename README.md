@@ -20,6 +20,7 @@ npx cap sync
 * [`execSQL(...)`](#execsql)
 * [`rawQuery(...)`](#rawquery)
 * [`insert(...)`](#insert)
+* [`getLastInsertRowId(...)`](#getlastinsertrowid)
 * [`update(...)`](#update)
 * [`delete(...)`](#delete)
 * [`beginTransaction(...)`](#begintransaction)
@@ -155,6 +156,25 @@ Mirrors SQLiteDatabase.insert: values is a map of column names to values.
 | Param         | Type                                                        |
 | ------------- | ----------------------------------------------------------- |
 | **`options`** | <code>{ name?: string; table: string; values: any; }</code> |
+
+**Returns:** <code>any</code>
+
+--------------------
+
+
+### getLastInsertRowId(...)
+
+```typescript
+getLastInsertRowId(options: { name?: string; }) => any
+```
+
+Return the "rowId" of the last row to be inserted on the current connection.
+
+Mirrors SQLiteDatabase.getLastInsertRowId.
+
+| Param         | Type                            |
+| ------------- | ------------------------------- |
+| **`options`** | <code>{ name?: string; }</code> |
 
 **Returns:** <code>any</code>
 

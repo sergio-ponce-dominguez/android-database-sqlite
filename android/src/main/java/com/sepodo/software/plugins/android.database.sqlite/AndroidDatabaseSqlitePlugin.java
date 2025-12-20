@@ -150,6 +150,26 @@ public class AndroidDatabaseSqlitePlugin extends Plugin {
     }
 
     @PluginMethod()
+    public void getLastInsertRowId(PluginCall call) {
+        String name = call.getString("name", "app.db");
+
+        LongResult result = null;
+        try {
+            result = implementation.getLastInsertRowId(name);
+        } catch (Exception ex) {
+            call.reject("getLastInsertRowId failed: " + ex.getMessage(), ex);
+            return;
+        }
+        if (result.error == null) {
+            JSObject res = new JSObject();
+            res.put("rowId", result.value);
+            call.resolve(res);
+        } else {
+            call.reject(result.error);
+        }
+    }
+
+    @PluginMethod()
     public void update(PluginCall call) {
         String name = call.getString("name", "app.db");
         String table = call.getString("table");
