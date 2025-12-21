@@ -78,7 +78,7 @@ public class AndroidDatabaseSqlitePlugin extends Plugin {
         String name = call.getString("name", "app.db");
         String sql = call.getString("sql");
         JSArray bindArgs = call.getArray("bindArgs");
-        Boolean getChanges = call.getArray("getChanges");
+        Boolean getChanges = call.getBoolean("getChanges", false);
         if (sql == null) {
             call.reject("Missing 'sql' parameter");
             return;
