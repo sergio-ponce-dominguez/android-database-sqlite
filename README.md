@@ -2,6 +2,16 @@
 
 Simple wrapper around android.database.sqlite
 
+## Maintainers
+
+| Maintainer | GitHub                                                              |
+| ---------- | ------------------------------------------------------------------- |
+| Sergio     | [sergio-ponce-dominguez](https://github.com/sergio-ponce-dominguez) |
+
+## Supported Platform
+
+- Android
+
 ## Install
 
 ```bash
@@ -13,22 +23,23 @@ npx cap sync
 
 <docgen-index>
 
-* [`echo(...)`](#echo)
-* [`openOrCreateDatabase(...)`](#openorcreatedatabase)
-* [`isOpen(...)`](#isopen)
-* [`close(...)`](#close)
-* [`execSQL(...)`](#execsql)
-* [`rawQuery(...)`](#rawquery)
-* [`insert(...)`](#insert)
-* [`getLastInsertRowId(...)`](#getlastinsertrowid)
-* [`getLastChangedRowCount(...)`](#getlastchangedrowcount)
-* [`update(...)`](#update)
-* [`delete(...)`](#delete)
-* [`beginTransaction(...)`](#begintransaction)
-* [`setTransactionSuccessful(...)`](#settransactionsuccessful)
-* [`endTransaction(...)`](#endtransaction)
-* [`getVersion(...)`](#getversion)
-* [`setVersion(...)`](#setversion)
+- [`echo(...)`](#echo)
+- [`openOrCreateDatabase(...)`](#openorcreatedatabase)
+- [`isOpen(...)`](#isopen)
+- [`close(...)`](#close)
+- [`execSQL(...)`](#execsql)
+- [`rawQuery(...)`](#rawquery)
+- [`insert(...)`](#insert)
+- [`getLastInsertRowId(...)`](#getlastinsertrowid)
+- [`getLastChangedRowCount(...)`](#getlastchangedrowcount)
+- [`update(...)`](#update)
+- [`delete(...)`](#delete)
+- [`beginTransaction(...)`](#begintransaction)
+- [`setTransactionSuccessful(...)`](#settransactionsuccessful)
+- [`endTransaction(...)`](#endtransaction)
+- [`getVersion(...)`](#getversion)
+- [`setVersion(...)`](#setversion)
+- [Type Aliases](#type-aliases)
 
 </docgen-index>
 
@@ -38,7 +49,7 @@ npx cap sync
 ### echo(...)
 
 ```typescript
-echo(options: { value: string; }) => any
+echo(options: { value: string; }) => Promise<{ value: string; }>
 ```
 
 Return the same value passed in. Useful for basic connectivity / wiring tests.
@@ -47,15 +58,14 @@ Return the same value passed in. Useful for basic connectivity / wiring tests.
 | ------------- | ------------------------------- |
 | **`options`** | <code>{ value: string; }</code> |
 
-**Returns:** <code>any</code>
+**Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
 
---------------------
-
+---
 
 ### openOrCreateDatabase(...)
 
 ```typescript
-openOrCreateDatabase(options: { name?: string; }) => any
+openOrCreateDatabase(options: { name?: string; }) => Promise<{ name: string; }>
 ```
 
 Open an existing database by name or create it if it does not exist.
@@ -66,15 +76,14 @@ a database with the given name is available for use.
 | ------------- | ------------------------------- |
 | **`options`** | <code>{ name?: string; }</code> |
 
-**Returns:** <code>any</code>
+**Returns:** <code>Promise&lt;{ name: string; }&gt;</code>
 
---------------------
-
+---
 
 ### isOpen(...)
 
 ```typescript
-isOpen(options: { name?: string; }) => any
+isOpen(options: { name?: string; }) => Promise<{ value: boolean; }>
 ```
 
 Check whether the named database is currently open.
@@ -83,15 +92,14 @@ Check whether the named database is currently open.
 | ------------- | ------------------------------- |
 | **`options`** | <code>{ name?: string; }</code> |
 
-**Returns:** <code>any</code>
+**Returns:** <code>Promise&lt;{ value: boolean; }&gt;</code>
 
---------------------
-
+---
 
 ### close(...)
 
 ```typescript
-close(options: { name?: string; }) => any
+close(options: { name?: string; }) => Promise<void>
 ```
 
 Close the named database. After calling this, the database should no longer
@@ -101,33 +109,29 @@ be used until reopened.
 | ------------- | ------------------------------- |
 | **`options`** | <code>{ name?: string; }</code> |
 
-**Returns:** <code>any</code>
-
---------------------
-
+---
 
 ### execSQL(...)
 
 ```typescript
-execSQL(options: { name?: string; sql: string; bindArgs?: any[]; getChanges?: boolean; }) => any
+execSQL(options: { name?: string; sql: string; bindArgs?: any[]; getChanges?: boolean; }) => Promise<{ changes?: number; lastId?: number; }>
 ```
 
 Execute a single SQL statement that does not return results (for example
 DDL or INSERT/UPDATE/DELETE without returning rows).
 
-| Param         | Type                                                                              |
-| ------------- | --------------------------------------------------------------------------------- |
-| **`options`** | <code>{ name?: string; sql: string; bindArgs?: {}; getChanges?: boolean; }</code> |
+| Param         | Type                                                                                 |
+| ------------- | ------------------------------------------------------------------------------------ |
+| **`options`** | <code>{ name?: string; sql: string; bindArgs?: any[]; getChanges?: boolean; }</code> |
 
-**Returns:** <code>any</code>
+**Returns:** <code>Promise&lt;{ changes?: number; lastId?: number; }&gt;</code>
 
---------------------
-
+---
 
 ### rawQuery(...)
 
 ```typescript
-rawQuery(options: { name?: string; sql: string; selectionArgs?: any[]; }) => any
+rawQuery(options: { name?: string; sql: string; selectionArgs?: any[]; }) => Promise<{ rows: any[]; }>
 ```
 
 Run a SELECT query and return the resulting rows.
@@ -135,38 +139,36 @@ Run a SELECT query and return the resulting rows.
 This mirrors SQLiteDatabase.rawQuery: the SQL may contain '?' placeholders
 that will be replaced by selectionArgs in order.
 
-| Param         | Type                                                             |
-| ------------- | ---------------------------------------------------------------- |
-| **`options`** | <code>{ name?: string; sql: string; selectionArgs?: {}; }</code> |
+| Param         | Type                                                                |
+| ------------- | ------------------------------------------------------------------- |
+| **`options`** | <code>{ name?: string; sql: string; selectionArgs?: any[]; }</code> |
 
-**Returns:** <code>any</code>
+**Returns:** <code>Promise&lt;{ rows: any[]; }&gt;</code>
 
---------------------
-
+---
 
 ### insert(...)
 
 ```typescript
-insert(options: { name?: string; table: string; values: Record<string, any>; }) => any
+insert(options: { name?: string; table: string; values: Record<string, any>; }) => Promise<{ id: number; }>
 ```
 
 Insert a row into a table.
 
 Mirrors SQLiteDatabase.insert: values is a map of column names to values.
 
-| Param         | Type                                                        |
-| ------------- | ----------------------------------------------------------- |
-| **`options`** | <code>{ name?: string; table: string; values: any; }</code> |
+| Param         | Type                                                                                                    |
+| ------------- | ------------------------------------------------------------------------------------------------------- |
+| **`options`** | <code>{ name?: string; table: string; values: <a href="#record">Record</a>&lt;string, any&gt;; }</code> |
 
-**Returns:** <code>any</code>
+**Returns:** <code>Promise&lt;{ id: number; }&gt;</code>
 
---------------------
-
+---
 
 ### getLastInsertRowId(...)
 
 ```typescript
-getLastInsertRowId(options: { name?: string; }) => any
+getLastInsertRowId(options: { name?: string; }) => Promise<{ lastId: number; }>
 ```
 
 Return the "rowId" of the last row to be inserted on the current connection.
@@ -177,15 +179,14 @@ Mirrors SQLiteDatabase.getLastInsertRowId.
 | ------------- | ------------------------------- |
 | **`options`** | <code>{ name?: string; }</code> |
 
-**Returns:** <code>any</code>
+**Returns:** <code>Promise&lt;{ lastId: number; }&gt;</code>
 
---------------------
-
+---
 
 ### getLastChangedRowCount(...)
 
 ```typescript
-getLastChangedRowCount(options: { name?: string; }) => any
+getLastChangedRowCount(options: { name?: string; }) => Promise<{ changes: number; }>
 ```
 
 Return the number of database rows that were inserted, updated, or deleted by the most recent SQL statement within the current transaction.
@@ -196,15 +197,14 @@ Mirrors SQLiteDatabase.getLastChangedRowCount.
 | ------------- | ------------------------------- |
 | **`options`** | <code>{ name?: string; }</code> |
 
-**Returns:** <code>any</code>
+**Returns:** <code>Promise&lt;{ changes: number; }&gt;</code>
 
---------------------
-
+---
 
 ### update(...)
 
 ```typescript
-update(options: { name?: string; table: string; values: Record<string, any>; whereClause?: string; whereArgs?: any[]; }) => any
+update(options: { name?: string; table: string; values: Record<string, any>; whereClause?: string; whereArgs?: any[]; }) => Promise<{ rowsAffected: number; }>
 ```
 
 Update rows in a table.
@@ -212,19 +212,18 @@ Update rows in a table.
 Mirrors SQLiteDatabase.update: updates rows that match the whereClause
 (which may contain '?' placeholders replaced by whereArgs).
 
-| Param         | Type                                                                                              |
-| ------------- | ------------------------------------------------------------------------------------------------- |
-| **`options`** | <code>{ name?: string; table: string; values: any; whereClause?: string; whereArgs?: {}; }</code> |
+| Param         | Type                                                                                                                                             |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **`options`** | <code>{ name?: string; table: string; values: <a href="#record">Record</a>&lt;string, any&gt;; whereClause?: string; whereArgs?: any[]; }</code> |
 
-**Returns:** <code>any</code>
+**Returns:** <code>Promise&lt;{ rowsAffected: number; }&gt;</code>
 
---------------------
-
+---
 
 ### delete(...)
 
 ```typescript
-delete(options: { name?: string; table: string; whereClause?: string; whereArgs?: any[]; }) => any
+delete(options: { name?: string; table: string; whereClause?: string; whereArgs?: any[]; }) => Promise<{ rowsAffected: number; }>
 ```
 
 Delete rows from a table.
@@ -232,19 +231,18 @@ Delete rows from a table.
 Mirrors SQLiteDatabase.delete: deletes rows that match the whereClause
 (which may contain '?' placeholders replaced by whereArgs).
 
-| Param         | Type                                                                                 |
-| ------------- | ------------------------------------------------------------------------------------ |
-| **`options`** | <code>{ name?: string; table: string; whereClause?: string; whereArgs?: {}; }</code> |
+| Param         | Type                                                                                    |
+| ------------- | --------------------------------------------------------------------------------------- |
+| **`options`** | <code>{ name?: string; table: string; whereClause?: string; whereArgs?: any[]; }</code> |
 
-**Returns:** <code>any</code>
+**Returns:** <code>Promise&lt;{ rowsAffected: number; }&gt;</code>
 
---------------------
-
+---
 
 ### beginTransaction(...)
 
 ```typescript
-beginTransaction(options: { name?: string; }) => any
+beginTransaction(options: { name?: string; }) => Promise<void>
 ```
 
 Begin a transaction on the named database. Subsequent operations will be
@@ -257,15 +255,12 @@ implementation and are intended to match Android's default behavior.
 | ------------- | ------------------------------- |
 | **`options`** | <code>{ name?: string; }</code> |
 
-**Returns:** <code>any</code>
-
---------------------
-
+---
 
 ### setTransactionSuccessful(...)
 
 ```typescript
-setTransactionSuccessful(options: { name?: string; }) => any
+setTransactionSuccessful(options: { name?: string; }) => Promise<void>
 ```
 
 Mark the current transaction as successful. When endTransaction is called,
@@ -276,15 +271,12 @@ otherwise it will be rolled back.
 | ------------- | ------------------------------- |
 | **`options`** | <code>{ name?: string; }</code> |
 
-**Returns:** <code>any</code>
-
---------------------
-
+---
 
 ### endTransaction(...)
 
 ```typescript
-endTransaction(options: { name?: string; }) => any
+endTransaction(options: { name?: string; }) => Promise<void>
 ```
 
 End a transaction. Commits if setTransactionSuccessful was called on the
@@ -294,15 +286,12 @@ current transaction, otherwise rolls back.
 | ------------- | ------------------------------- |
 | **`options`** | <code>{ name?: string; }</code> |
 
-**Returns:** <code>any</code>
-
---------------------
-
+---
 
 ### getVersion(...)
 
 ```typescript
-getVersion(options: { name?: string; }) => any
+getVersion(options: { name?: string; }) => Promise<{ version: number; }>
 ```
 
 Get the user_version PRAGMA for the database. This is commonly used to
@@ -312,15 +301,14 @@ store the schema version.
 | ------------- | ------------------------------- |
 | **`options`** | <code>{ name?: string; }</code> |
 
-**Returns:** <code>any</code>
+**Returns:** <code>Promise&lt;{ version: number; }&gt;</code>
 
---------------------
-
+---
 
 ### setVersion(...)
 
 ```typescript
-setVersion(options: { name?: string; version: number; }) => any
+setVersion(options: { name?: string; version: number; }) => Promise<void>
 ```
 
 Set the user_version PRAGMA for the database. Used to record schema version.
@@ -329,8 +317,16 @@ Set the user_version PRAGMA for the database. Used to record schema version.
 | ------------- | ------------------------------------------------ |
 | **`options`** | <code>{ name?: string; version: number; }</code> |
 
-**Returns:** <code>any</code>
+---
 
---------------------
+### Type Aliases
+
+#### Record
+
+Construct a type with a set of properties K of type T
+
+<code>{
+ [P in K]: T;
+ }</code>
 
 </docgen-api>
