@@ -1,6 +1,6 @@
 # android-database-sqlite
 
-Simple wrapper around android.database.sqlite
+Simple Capacitor wrapper around android.database.sqlite
 
 ## Maintainers
 
@@ -23,23 +23,23 @@ npx cap sync
 
 <docgen-index>
 
-- [`echo(...)`](#echo)
-- [`openOrCreateDatabase(...)`](#openorcreatedatabase)
-- [`isOpen(...)`](#isopen)
-- [`close(...)`](#close)
-- [`execSQL(...)`](#execsql)
-- [`rawQuery(...)`](#rawquery)
-- [`insert(...)`](#insert)
-- [`getLastInsertRowId(...)`](#getlastinsertrowid)
-- [`getLastChangedRowCount(...)`](#getlastchangedrowcount)
-- [`update(...)`](#update)
-- [`delete(...)`](#delete)
-- [`beginTransaction(...)`](#begintransaction)
-- [`setTransactionSuccessful(...)`](#settransactionsuccessful)
-- [`endTransaction(...)`](#endtransaction)
-- [`getVersion(...)`](#getversion)
-- [`setVersion(...)`](#setversion)
-- [Type Aliases](#type-aliases)
+* [`echo(...)`](#echo)
+* [`openOrCreateDatabase(...)`](#openorcreatedatabase)
+* [`isOpen(...)`](#isopen)
+* [`close(...)`](#close)
+* [`execSQL(...)`](#execsql)
+* [`rawQuery(...)`](#rawquery)
+* [`insert(...)`](#insert)
+* [`getLastInsertRowId(...)`](#getlastinsertrowid)
+* [`getLastChangedRowCount(...)`](#getlastchangedrowcount)
+* [`update(...)`](#update)
+* [`delete(...)`](#delete)
+* [`beginTransaction(...)`](#begintransaction)
+* [`setTransactionSuccessful(...)`](#settransactionsuccessful)
+* [`endTransaction(...)`](#endtransaction)
+* [`getVersion(...)`](#getversion)
+* [`setVersion(...)`](#setversion)
+* [Type Aliases](#type-aliases)
 
 </docgen-index>
 
@@ -60,7 +60,8 @@ Return the same value passed in. Useful for basic connectivity / wiring tests.
 
 **Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
 
----
+--------------------
+
 
 ### openOrCreateDatabase(...)
 
@@ -78,7 +79,8 @@ a database with the given name is available for use.
 
 **Returns:** <code>Promise&lt;{ name: string; }&gt;</code>
 
----
+--------------------
+
 
 ### isOpen(...)
 
@@ -94,7 +96,8 @@ Check whether the named database is currently open.
 
 **Returns:** <code>Promise&lt;{ value: boolean; }&gt;</code>
 
----
+--------------------
+
 
 ### close(...)
 
@@ -109,7 +112,8 @@ be used until reopened.
 | ------------- | ------------------------------- |
 | **`options`** | <code>{ name?: string; }</code> |
 
----
+--------------------
+
 
 ### execSQL(...)
 
@@ -126,7 +130,8 @@ DDL or INSERT/UPDATE/DELETE without returning rows).
 
 **Returns:** <code>Promise&lt;{ changes?: number; lastId?: number; }&gt;</code>
 
----
+--------------------
+
 
 ### rawQuery(...)
 
@@ -145,7 +150,8 @@ that will be replaced by selectionArgs in order.
 
 **Returns:** <code>Promise&lt;{ rows: any[]; }&gt;</code>
 
----
+--------------------
+
 
 ### insert(...)
 
@@ -163,7 +169,8 @@ Mirrors SQLiteDatabase.insert: values is a map of column names to values.
 
 **Returns:** <code>Promise&lt;{ id: number; }&gt;</code>
 
----
+--------------------
+
 
 ### getLastInsertRowId(...)
 
@@ -181,7 +188,8 @@ Mirrors SQLiteDatabase.getLastInsertRowId.
 
 **Returns:** <code>Promise&lt;{ lastId: number; }&gt;</code>
 
----
+--------------------
+
 
 ### getLastChangedRowCount(...)
 
@@ -199,7 +207,8 @@ Mirrors SQLiteDatabase.getLastChangedRowCount.
 
 **Returns:** <code>Promise&lt;{ changes: number; }&gt;</code>
 
----
+--------------------
+
 
 ### update(...)
 
@@ -218,7 +227,8 @@ Mirrors SQLiteDatabase.update: updates rows that match the whereClause
 
 **Returns:** <code>Promise&lt;{ rowsAffected: number; }&gt;</code>
 
----
+--------------------
+
 
 ### delete(...)
 
@@ -237,7 +247,8 @@ Mirrors SQLiteDatabase.delete: deletes rows that match the whereClause
 
 **Returns:** <code>Promise&lt;{ rowsAffected: number; }&gt;</code>
 
----
+--------------------
+
 
 ### beginTransaction(...)
 
@@ -255,7 +266,8 @@ implementation and are intended to match Android's default behavior.
 | ------------- | ------------------------------- |
 | **`options`** | <code>{ name?: string; }</code> |
 
----
+--------------------
+
 
 ### setTransactionSuccessful(...)
 
@@ -271,7 +283,8 @@ otherwise it will be rolled back.
 | ------------- | ------------------------------- |
 | **`options`** | <code>{ name?: string; }</code> |
 
----
+--------------------
+
 
 ### endTransaction(...)
 
@@ -286,7 +299,8 @@ current transaction, otherwise rolls back.
 | ------------- | ------------------------------- |
 | **`options`** | <code>{ name?: string; }</code> |
 
----
+--------------------
+
 
 ### getVersion(...)
 
@@ -303,7 +317,8 @@ store the schema version.
 
 **Returns:** <code>Promise&lt;{ version: number; }&gt;</code>
 
----
+--------------------
+
 
 ### setVersion(...)
 
@@ -317,16 +332,16 @@ Set the user_version PRAGMA for the database. Used to record schema version.
 | ------------- | ------------------------------------------------ |
 | **`options`** | <code>{ name?: string; version: number; }</code> |
 
----
+--------------------
+
 
 ### Type Aliases
+
 
 #### Record
 
 Construct a type with a set of properties K of type T
 
-<code>{
- [P in K]: T;
- }</code>
+<code>{ [P in K]: T; }</code>
 
 </docgen-api>
