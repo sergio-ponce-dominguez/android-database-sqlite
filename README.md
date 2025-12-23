@@ -181,6 +181,7 @@ getLastInsertRowId(options: { name?: string; }) => Promise<{ lastId: number; }>
 Return the "rowId" of the last row to be inserted on the current connection.
 
 Mirrors SQLiteDatabase.getLastInsertRowId.
+implemented on API level 35 or above
 
 | Param         | Type                            |
 | ------------- | ------------------------------- |
@@ -200,6 +201,7 @@ getLastChangedRowCount(options: { name?: string; }) => Promise<{ changes: number
 Return the number of database rows that were inserted, updated, or deleted by the most recent SQL statement within the current transaction.
 
 Mirrors SQLiteDatabase.getLastChangedRowCount.
+implemented on API level 35 or above
 
 | Param         | Type                            |
 | ------------- | ------------------------------- |

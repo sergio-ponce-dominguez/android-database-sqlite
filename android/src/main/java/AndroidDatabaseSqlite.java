@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.util.Base64;
 
 import com.getcapacitor.Logger;
@@ -100,7 +101,7 @@ public class AndroidDatabaseSqlite {
         return result;
     }
 
-    public LongResult getLastInsertRowId(String name) {
+     public LongResult getLastInsertRowId(String name) {
         SQLiteDatabase db = databases.get(name);
         LongResult result = new LongResult();
         if (db == null || !db.isOpen()) {
@@ -108,8 +109,12 @@ public class AndroidDatabaseSqlite {
             return result;
         }
 
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
         result.value = db.getLastInsertRowId();
-        return result;
+      } else {
+        Logger.warn("getLastInsertRowId is implemented on API level 35 or above, current is " + Build.VERSION.SDK_INT);
+      }
+      return result;
     }
 
     public LongResult getLastChangedRowCount(String name) {
@@ -120,8 +125,12 @@ public class AndroidDatabaseSqlite {
             return result;
         }
 
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
         result.value = db.getLastChangedRowCount();
-        return result;
+      } else {
+        Logger.warn("getLastChangedRowCount is implemented on API level 35 or above, current is " + Build.VERSION.SDK_INT);
+      }
+      return result;
     }
 
     public LongResult update(String name, String table, JSObject values, String whereClause, JSArray whereArgs) throws JSONException {

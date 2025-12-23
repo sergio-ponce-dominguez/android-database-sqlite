@@ -1,6 +1,6 @@
 {
   "name": "android-database-sqlite",
-  "version": "8.0.2",
+  "version": "8.0.3",
   "description": "Simple Capacitor wrapper around android.database.sqlite",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",

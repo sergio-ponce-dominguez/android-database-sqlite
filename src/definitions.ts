@@ -40,7 +40,7 @@ export interface AndroidDatabaseSqlitePlugin {
    * @param options.name optional database name
    * @param options.sql the SQL statement to execute
    * @param options.bindArgs optional array of bind parameters for the statement
-   * @param options.getChanges if true, return value { changes, lastId } is filled
+   * @param options.getChanges if true, return value { changes, lastId } is filled, implemented on API level 35 or above
    * @returns { changes, lastId } The number of rows changed by the most recent sql statement and The ROWID of the last row to be inserted under this connection.
    */
   execSQL(options: {
@@ -79,6 +79,7 @@ export interface AndroidDatabaseSqlitePlugin {
    * Return the "rowId" of the last row to be inserted on the current connection.
    *
    * Mirrors SQLiteDatabase.getLastInsertRowId.
+   * implemented on API level 35 or above
    *
    * @param options.name optional database name
    * @returns { lastId } The ROWID of the last row to be inserted under this connection.
@@ -89,6 +90,7 @@ export interface AndroidDatabaseSqlitePlugin {
    * Return the number of database rows that were inserted, updated, or deleted by the most recent SQL statement within the current transaction.
    *
    * Mirrors SQLiteDatabase.getLastChangedRowCount.
+   * implemented on API level 35 or above
    *
    * @param options.name optional database name
    * @returns { changes } The number of rows changed by the most recent sql statement
